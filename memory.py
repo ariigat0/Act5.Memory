@@ -1,12 +1,13 @@
-"""Memory, puzzle game of number pairs.
+"""
+        M E M O R Y
+puzzle game of number pairs.
 
-Exercises:
-
-1. Count and print how many taps occur.
-2. Decrease the number of tiles to a 4x4 grid.
-3. Detect when all tiles are revealed.
-4. Center single-digit tile.
-5. Use letters instead of tiles.
+- Contar y desplegar el numero de taps
+- Detectar cuando todos los cuadros se han destapado
+- Central el dígito en el cuadro
+- Como un condimento de innovación al juego, 
+- Podrías utilizar algo diferente a los dígitos para resolver el 
+juego y que al usuario le ayude a tener mejor memoria ?
 
 """
 
@@ -16,8 +17,11 @@ from freegames import path
 
 car = path('car.gif')
 tiles = list(range(32)) * 2
-state = {'mark': None}
+state = {'mark': None, "count":0}
 hide = [True] * 64
+writer = Turtle(visible=False)
+taps=0 # Inicializa contador de taps
+encontrados =0 # Inicializando contador de parejas 
 
 def square(x, y):
     "Draw white square with black outline at (x, y)."
@@ -50,6 +54,8 @@ def tap(x, y):
         hide[spot] = False
         hide[mark] = False
         state['mark'] = None
+        global encontrados
+        encontrados +=1
 
 def draw():
     "Draw image and tiles."
@@ -62,21 +68,30 @@ def draw():
         if hide[count]:
             x, y = xy(count)
             square(x, y)
-
-    mark = state['mark']
+    mark = state ['mark']
 
     if mark is not None and hide[mark]:
         x, y = xy(mark)
-        up()
-        goto(x + 2, y)
-        color('black')
-        write(tiles[mark], font=('Arial', 30, 'normal'))
+        if tiles[mark]<=8:
+            up()
+            goto(x + 26, y+4) # Centrar digito
+            write(tiles[mark], align="center", font=('Arial', 30, 'normal')) # Centrando el digito en el cuadro
 
+    goto(0,210) # Posicionando contador de taps que se mostrará
+    write (taps,font=("Arial",30)) # Desplegando la cantidad de taps
+    
+    if encontrados==32: # Compara el total de parejas encontradas con las totales
+        up()
+        goto(0, 0)
+        color('green')
+        write("YOU WIN!",  align="center", font=("Impact", 30, "bold")) # Detecta cuando todas se han encontrado y lanza mensaje
     update()
     ontimer(draw, 100)
 
+
 shuffle(tiles)
 setup(420, 420, 370, 0)
+colormode(255)
 addshape(car)
 hideturtle()
 tracer(False)
